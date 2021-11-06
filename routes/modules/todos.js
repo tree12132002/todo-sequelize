@@ -24,7 +24,7 @@ router.get('/:id/edit', (req, res) => {
   const UserId = req.user.id
   const id = req.params.id
 
-  return Todo.findOne({ id, UserId })
+  return Todo.findOne({ where: { id, UserId } })
     .then((todo) => res.render('edit', { todo: todo.toJSON() }))
     .catch(error => console.log(error))
 })
@@ -35,7 +35,7 @@ router.put('/:id', (req, res) => {
   const id = req.params.id
   const { name, isDone } = req.body
 
-  return Todo.findOne({ id, UserId })
+  return Todo.findOne({ where: { id, UserId } })
     .then(todo => {
       todo.name = name
       todo.isDone = isDone === 'on'
@@ -45,11 +45,22 @@ router.put('/:id', (req, res) => {
     .catch(error => console.log(error))
 })
 
+// 刪除檢查
+router.delete('/:id', (req, res) => {
+  const UserId = req.user.id
+  const id = req.params.id
+
+  return Todo.findOne({ where: { id, UserId } })
+    .then(todo => todo.destroy())
+    .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
+
 // 詳情頁面
 router.get('/:id', (req, res) => {
   const UserId = req.user.id
   const id = req.params.id
-  
+
   return Todo.findOne({ where: { id, UserId } })
     .then(todo => res.render('detail', { todo: todo.toJSON() }))
     .catch(error => console.log(error))
