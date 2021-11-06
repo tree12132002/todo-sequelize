@@ -3,13 +3,19 @@ const router = express.Router()
 
 const db = require('../../models')
 const Todo = db.Todo
+const User = db.User
 
 // 登入首頁
 router.get('/', (req, res) => {
-  return Todo.findAll({
-    raw: true,
-    nest: true
-  })
+  const UserId = req.user.id
+  User.findByPk(UserId)
+    .then(() => {
+      return Todo.findAll({
+        raw: true,
+        nest: true,
+        where: { UserId }
+      })
+    })
     .then((todos) => {
       return res.render('index', { todos: todos })
     })
