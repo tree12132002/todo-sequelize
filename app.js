@@ -18,7 +18,24 @@ app.use(methodOverride('_method'))
 // 設定路由
 // 登入首頁
 app.get('/', (req, res) => {
-  res.send('hello world')
+  return Todo.findAll({
+    raw: true,
+    nest: true
+  })
+    .then((todos) => {
+      return res.render('index', { todos: todos })
+    })
+    .catch((error) => {
+      return res.status(422).json(error)
+    })
+})
+
+// 登入詳情頁
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findByPk(id)
+    .then(todo => res.render('detail', { todo: todo.toJSON() }))
+    .catch(error => console.log(error))
 })
 
 // 認證系統的路由
@@ -39,12 +56,28 @@ app.get('/users/register', (req, res) => {
 
 // 註冊檢查
 app.post('/users/register', (req, res) => {
-  User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password
+  const { name, email, password, confirmPassword } = req.body
+  User.findOne({ where: { email } }).then(user => {
+    if (user) {
+      console.log('User already exists')
+      return res.render('register', {
+        name,
+        email,
+        password,
+        confirmPassword
+      })
+    }
+    return bcrypt
+      .genSalt(10)
+      .then(salt => bcrypt.hash(password, salt))
+      .then(hash => User.create({
+        name,
+        email,
+        password: hash
+      }))
+      .then(() => res.redirect('/'))
+      .catch(err => console.log(err))
   })
-  .then(user => res.redirect('/'))
 })
 
 // 登出
