@@ -1,4 +1,7 @@
 const express = require('express')
+const session = require('express-session')
+const usePassport = require('./config/passport')
+const passport = require('passport')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const bcrypt = require('bcryptjs')
@@ -7,13 +10,21 @@ const app = express()
 const PORT = 3000
 
 const db = require('./models')
+const { use } = require('passport')
 const Todo = db.Todo
 const User = db.User
 
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
+
+app.use(session({
+  secret: 'ThisIsMySecret',
+  resave: false,
+  saveUninitialized: true
+}))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+usePassport(app)
 
 // 設定路由
 // 登入首頁
@@ -45,9 +56,10 @@ app.get('/users/login', (req, res) => {
 })
 
 // 登入檢查
-app.post('/users/login', (req, res) => {
-  res.send('login')
-})
+app.post('/users/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/users/login'
+}))
 
 // 註冊頁面
 app.get('/users/register', (req, res) => {

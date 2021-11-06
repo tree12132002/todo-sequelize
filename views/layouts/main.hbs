@@ -12,9 +12,9 @@
 <body class="bg-light">
   <header>
     <nav class="navbar navbar-dark bg-primary justify-content-between">
-      <a href="/" class="navbar-brand">
-      {{#if isAuthenticated}}{{ user.name }}'s {{/if}}
-      Todo List
+      <a class="navbar-brand" href="/">
+        {{#if isAuthenticated}}{{ user.name}}'s {{/if}}
+        Todo List
       </a>
       {{#if isAuthenticated}}
       <a href="/users/logout" class="btn btn-outline-light">Logout</a>
