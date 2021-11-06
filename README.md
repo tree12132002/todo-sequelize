@@ -4,7 +4,7 @@
 ## Feature
 * The user can create an account(with email or Facebook) to manage their todo list.
 * The user can see all lists on the home page.
-* The user can click the `Detail button` or `restaurant image` to see the clicked one.
+* The user can click the `Detail button`see more detail information.
 * The user can click the `Create button` to create a new todo item.
 * The user can click the `Edit button` to edit the todo item.
 * The user can click the `Delete button` to delete the todo item.
